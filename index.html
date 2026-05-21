@@ -3,399 +3,571 @@
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>光纤物语 — 分布式光纤传感科普</title>
+    <title>FIBER SENSE · 光纤传感科普</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg: #f8f9fa;
-            --card: #ffffff;
-            --text: #1a1a2e;
-            --text2: #555;
-            --accent: #0066cc;
-            --accent2: #004080;
-            --border: #e0e0e0;
-            --tag-bg: #eef2ff;
-            --tag-text: #004080;
-        }
-        [data-theme="dark"] {
-            --bg: #0d1117;
-            --card: #161b22;
-            --text: #e6edf3;
-            --text2: #8b949e;
-            --border: #30363d;
-            --tag-bg: #1f2937;
-            --tag-text: #58a6ff;
-        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans SC", sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.7;
-            transition: background .3s, color .3s;
+            font-family: "Inter", -apple-system, "Noto Sans SC", sans-serif;
+            background: #0a0a12;
+            color: #e0e0f0;
+            overflow-x: hidden;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #0a0a12; }
+        ::-webkit-scrollbar-thumb { background: #2a2a4a; border-radius: 3px; }
+
+        /* ── Animated background ── */
+        #bg-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100vw; height: 100vh;
+            z-index: 0;
+            pointer-events: none;
         }
 
+        /* ── Header ── */
         .header {
-            border-bottom: 1px solid var(--border);
-            padding: 1.2rem 2rem;
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            z-index: 100;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            backdrop-filter: blur(8px);
-            background: color-mix(in srgb, var(--bg) 85%, transparent);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            padding: 1rem 3rem;
+            backdrop-filter: blur(16px);
+            background: rgba(10,10,18,.6);
+            border-bottom: 1px solid rgba(100,140,255,.1);
         }
-        .logo { font-size: 1.3rem; font-weight: 700; letter-spacing: 1px; }
-        .logo span { color: var(--accent); }
-        .nav { display: flex; gap: 1.5rem; align-items: center; }
-        .nav a { color: var(--text2); text-decoration: none; font-size: .9rem; transition: color .2s; }
-        .nav a:hover { color: var(--accent); }
-        .theme-toggle {
-            background: none; border: 1px solid var(--border); border-radius: 6px;
-            padding: 4px 10px; cursor: pointer; font-size: 1rem; color: var(--text);
+        .logo {
+            font-size: 1.2rem;
+            font-weight: 800;
+            letter-spacing: 3px;
+            background: linear-gradient(135deg, #64b5f6, #42e695);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
-
-        .hero {
-            text-align: center;
-            padding: 4rem 2rem 3rem;
-            max-width: 720px;
-            margin: 0 auto;
+        .logo::before { content: "⟡ "; -webkit-text-fill-color: initial; color: #64b5f6; }
+        .nav { display: flex; gap: 2rem; align-items: center; }
+        .nav a {
+            color: rgba(224,224,240,.5);
+            text-decoration: none;
+            font-size: .85rem;
+            font-weight: 400;
+            letter-spacing: 1px;
+            transition: color .3s;
+            position: relative;
         }
-        .hero h1 { font-size: 2.4rem; font-weight: 800; margin-bottom: .6rem; }
-        .hero h1 span { color: var(--accent); }
-        .hero p { color: var(--text2); font-size: 1.05rem; max-width: 600px; margin: 0 auto; }
-        .hero .disclaimer {
-            margin-top: 1rem;
-            font-size: .8rem;
-            color: var(--text2);
-            opacity: .7;
-            background: var(--tag-bg);
-            display: inline-block;
-            padding: .3rem 1rem;
+        .nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -4px; left: 0;
+            width: 0; height: 1px;
+            background: linear-gradient(90deg, #64b5f6, #42e695);
+            transition: width .3s;
+        }
+        .nav a:hover { color: #e0e0f0; }
+        .nav a:hover::after { width: 100%; }
+        .nav .gh-link {
+            padding: 6px 16px;
+            border: 1px solid rgba(100,140,255,.25);
             border-radius: 20px;
+            font-size: .8rem;
+            transition: all .3s;
         }
-        .hero-tags {
-            display: flex; justify-content: center; gap: .8rem; flex-wrap: wrap;
-            margin-top: 1.5rem;
-        }
-        .hero-tags span {
-            background: var(--tag-bg); color: var(--tag-text);
-            padding: .3rem .9rem; border-radius: 20px; font-size: .82rem;
+        .nav .gh-link:hover {
+            border-color: #64b5f6;
+            box-shadow: 0 0 20px rgba(100,180,246,.15);
         }
 
-        /* Featured articles */
-        .featured {
-            max-width: 960px;
-            margin: 0 auto 2.5rem;
-            padding: 0 1.5rem;
+        /* ── Hero ── */
+        .hero {
+            position: relative;
+            z-index: 1;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            padding: 8rem 2rem 6rem;
         }
-        .featured h2 {
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
-            padding-bottom: .5rem;
-            border-bottom: 2px solid var(--accent);
-            display: inline-block;
+        .hero .subtitle-top {
+            font-size: .85rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: rgba(100,180,246,.5);
+            margin-bottom: 1.5rem;
+            font-weight: 300;
         }
+        .hero h1 {
+            font-size: clamp(2.8rem, 7vw, 5.5rem);
+            font-weight: 800;
+            line-height: 1.1;
+            letter-spacing: -2px;
+            background: linear-gradient(135deg, #ffffff 0%, #64b5f6 40%, #42e695 80%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+        }
+        .hero .tagline {
+            font-size: clamp(1rem, 2vw, 1.2rem);
+            color: rgba(224,224,240,.5);
+            max-width: 640px;
+            line-height: 1.8;
+            font-weight: 300;
+            letter-spacing: .5px;
+        }
+        .hero .tags-row {
+            display: flex;
+            gap: .8rem;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-top: 2.5rem;
+        }
+        .hero .tags-row span {
+            padding: .5rem 1.4rem;
+            border-radius: 30px;
+            font-size: .8rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            background: rgba(100,180,246,.08);
+            border: 1px solid rgba(100,140,255,.15);
+            color: rgba(224,224,240,.7);
+            backdrop-filter: blur(4px);
+            transition: all .3s;
+            cursor: default;
+        }
+        .hero .tags-row span:hover {
+            border-color: #64b5f6;
+            box-shadow: 0 0 24px rgba(100,180,246,.15);
+            color: #e0e0f0;
+        }
+        .hero .disclaimer {
+            margin-top: 2rem;
+            font-size: .75rem;
+            color: rgba(224,224,240,.25);
+            letter-spacing: 1px;
+        }
+
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2.5rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: .5rem;
+            opacity: .3;
+            animation: bob 2s ease-in-out infinite;
+        }
+        .scroll-indicator span {
+            font-size: .7rem;
+            letter-spacing: 2px;
+            color: rgba(224,224,240,.4);
+        }
+        .scroll-indicator .line {
+            width: 1px;
+            height: 40px;
+            background: linear-gradient(to bottom, rgba(100,180,246,.5), transparent);
+        }
+        @keyframes bob {
+            0%,100% { transform: translateX(-50%) translateY(0); }
+            50% { transform: translateX(-50%) translateY(8px); }
+        }
+
+        /* ── Section common ── */
+        .section {
+            position: relative;
+            z-index: 1;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 5rem 2rem;
+        }
+        .section-title {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+        .section-title .label {
+            font-size: .75rem;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: rgba(100,180,246,.4);
+            margin-bottom: .5rem;
+        }
+        .section-title h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #e0e0f0, #64b5f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* ── Featured grid ── */
         .featured-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
             gap: 1.2rem;
         }
         .featured-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 1.5rem;
-            transition: .2s;
+            position: relative;
+            padding: 2rem 1.5rem;
+            border-radius: 16px;
+            background: rgba(30,30,60,.4);
+            border: 1px solid rgba(100,140,255,.08);
+            backdrop-filter: blur(8px);
+            transition: all .4s cubic-bezier(.25,.8,.25,1);
+            cursor: default;
+            overflow: hidden;
         }
+        .featured-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0;
+            right: 0; bottom: 0;
+            border-radius: 16px;
+            padding: 1px;
+            background: linear-gradient(135deg, rgba(100,180,246,.2), transparent, rgba(66,230,149,.1));
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+            opacity: 0;
+            transition: opacity .4s;
+        }
+        .featured-card:hover::before { opacity: 1; }
         .featured-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0,0,0,.06);
+            transform: translateY(-6px);
+            background: rgba(40,40,80,.5);
+            border-color: rgba(100,140,255,.2);
+            box-shadow: 0 20px 60px rgba(0,0,0,.4);
         }
         .featured-card .badge {
             display: inline-block;
-            font-size: .7rem;
+            font-size: .65rem;
             font-weight: 600;
-            color: var(--accent);
+            letter-spacing: 2px;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: .4rem;
+            color: #42e695;
+            margin-bottom: .8rem;
         }
-        .featured-card h3 { font-size: 1.05rem; margin-bottom: .3rem; }
-        .featured-card p { color: var(--text2); font-size: .88rem; }
+        .featured-card h3 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: .6rem;
+            line-height: 1.4;
+        }
+        .featured-card p {
+            font-size: .88rem;
+            color: rgba(224,224,240,.5);
+            line-height: 1.7;
+            font-weight: 300;
+        }
 
-        /* Filter */
+        /* ── Filter bar ── */
         .filter-bar {
-            max-width: 960px;
-            margin: 0 auto 1.5rem;
-            padding: 0 1.5rem;
             display: flex;
             gap: .5rem;
             flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 2.5rem;
         }
         .filter-bar button {
-            background: none; border: 1px solid var(--border); border-radius: 20px;
-            padding: .3rem 1rem; font-size: .82rem; cursor: pointer;
-            color: var(--text2); transition: .2s;
+            padding: .5rem 1.4rem;
+            border-radius: 30px;
+            border: 1px solid rgba(100,140,255,.12);
+            background: rgba(30,30,60,.3);
+            color: rgba(224,224,240,.5);
+            font-size: .82rem;
+            cursor: pointer;
+            transition: all .3s;
+            font-family: inherit;
+            letter-spacing: .5px;
         }
-        .filter-bar button.active, .filter-bar button:hover {
-            background: var(--accent); color: #fff; border-color: var(--accent);
+        .filter-bar button:hover {
+            border-color: rgba(100,180,246,.3);
+            color: #e0e0f0;
+        }
+        .filter-bar button.active {
+            background: linear-gradient(135deg, rgba(100,180,246,.15), rgba(66,230,149,.1));
+            border-color: rgba(100,180,246,.3);
+            color: #e0e0f0;
+            box-shadow: 0 0 24px rgba(100,180,246,.08);
         }
 
-        /* Grid */
-        .posts {
-            max-width: 960px;
-            margin: 0 auto;
-            padding: 0 1.5rem 4rem;
+        /* ── Post grid ── */
+        .post-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.2rem;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1rem;
         }
         .post-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 1.3rem;
-            transition: .2s;
+            padding: 1.5rem;
+            border-radius: 14px;
+            background: rgba(30,30,60,.3);
+            border: 1px solid rgba(100,140,255,.06);
+            backdrop-filter: blur(4px);
+            transition: all .35s;
+            cursor: default;
         }
         .post-card:hover {
+            background: rgba(40,40,80,.4);
+            border-color: rgba(100,140,255,.15);
             transform: translateY(-3px);
-            box-shadow: 0 8px 24px rgba(0,0,0,.08);
+            box-shadow: 0 12px 40px rgba(0,0,0,.3);
         }
-        .post-card .category {
-            display: inline-block;
-            font-size: .7rem;
+        .post-card .cat {
+            font-size: .65rem;
             font-weight: 600;
-            color: var(--accent);
-            text-transform: uppercase;
-            letter-spacing: 1px;
+            letter-spacing: 2px;
+            color: rgba(100,180,246,.6);
             margin-bottom: .4rem;
         }
-        .post-card h3 { font-size: 1rem; margin-bottom: .3rem; line-height: 1.4; }
+        .post-card h3 {
+            font-size: .95rem;
+            font-weight: 600;
+            margin-bottom: .4rem;
+            line-height: 1.4;
+        }
         .post-card .excerpt {
-            color: var(--text2);
-            font-size: .85rem;
+            font-size: .82rem;
+            color: rgba(224,224,240,.45);
+            line-height: 1.7;
+            font-weight: 300;
             display: -webkit-box;
             -webkit-line-clamp: 3;
             -webkit-box-orient: vertical;
             overflow: hidden;
-            margin-bottom: .6rem;
+            margin-bottom: .8rem;
         }
         .post-card .meta {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            font-size: .76rem;
-            color: var(--text2);
+            font-size: .72rem;
+            color: rgba(224,224,240,.3);
         }
-        .post-card .tags {
-            display: flex;
-            gap: .3rem;
-            flex-wrap: wrap;
-        }
+        .post-card .tags { display: flex; gap: .3rem; flex-wrap: wrap; }
         .post-card .tags span {
-            background: var(--tag-bg); color: var(--tag-text);
-            padding: 0 .5rem; border-radius: 4px; font-size: .7rem;
+            padding: 2px 8px;
+            border-radius: 4px;
+            background: rgba(100,180,246,.06);
+            border: 1px solid rgba(100,140,255,.06);
+            font-size: .65rem;
+            color: rgba(224,224,240,.4);
         }
 
+        /* ── Footer ── */
         .footer {
+            position: relative;
+            z-index: 1;
             text-align: center;
-            padding: 2rem;
-            color: var(--text2);
-            font-size: .85rem;
-            border-top: 1px solid var(--border);
+            padding: 3rem 2rem;
+            border-top: 1px solid rgba(100,140,255,.06);
+            color: rgba(224,224,240,.2);
+            font-size: .8rem;
+            letter-spacing: 1px;
         }
-        .footer a { color: var(--accent); text-decoration: none; }
+        .footer a { color: rgba(100,180,246,.4); text-decoration: none; }
+        .footer a:hover { color: rgba(100,180,246,.7); }
 
+        /* ── Particle canvas ── */
         @media (max-width: 640px) {
-            .hero h1 { font-size: 1.8rem; }
-            .header { padding: .8rem 1rem; flex-wrap: wrap; gap: .5rem; }
+            .header { padding: .8rem 1.2rem; }
+            .nav a { font-size: .75rem; }
+            .hero { padding: 6rem 1.2rem 4rem; }
+            .section { padding: 3rem 1.2rem; }
+            .post-grid { grid-template-columns: 1fr; }
             .featured-grid { grid-template-columns: 1fr; }
-            .posts { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
+
+    <canvas id="bg-canvas"></canvas>
+
     <header class="header">
-        <div class="logo"><span>⟡</span> 光纤物语</div>
+        <div class="logo">FIBER SENSE</div>
         <nav class="nav">
             <a href="#">首页</a>
             <a href="#">归档</a>
             <a href="#">关于</a>
-            <button class="theme-toggle" onclick="toggleTheme()">🌓</button>
+            <a class="gh-link" href="https://github.com/Aze2022/fiber-optic-sensing-blog" target="_blank">GitHub</a>
         </nav>
     </header>
 
     <section class="hero">
-        <h1>分布式光纤 <span>传感</span> 科普</h1>
-        <p>从原理到应用，用通俗的语言讲清楚 DAS、DTS、DSS 是什么、怎么用、为什么重要</p>
-        <div class="hero-tags">
-            <span>#DAS</span>
-            <span>#DTS</span>
-            <span>#光纤传感</span>
-            <span>#油气监测</span>
-            <span>#科普</span>
+        <div class="subtitle-top">Distributed Fiber Optic Sensing</div>
+        <h1>光 纤 物 语</h1>
+        <p class="tagline">
+            DAS · DTS · DSS —— 从原理到应用，用最直观的方式<br class="hide-mobile">
+            理解光纤如何感知这个世界
+        </p>
+        <div class="tags-row">
+            <span>DAS</span>
+            <span>DTS</span>
+            <span>DSS</span>
+            <span>LF-DAS</span>
+            <span>uDAS</span>
+            <span>CO₂监测</span>
         </div>
-        <div class="disclaimer">📖 科普内容 · 不涉及具体工程数据</div>
+        <div class="disclaimer">科普内容 · 不涉及具体工程数据</div>
+        <div class="scroll-indicator">
+            <div class="line"></div>
+            <span>SCROLL</span>
+        </div>
     </section>
 
-    <section class="featured">
-        <h2>📌 推荐阅读</h2>
+    <section class="section" id="featured">
+        <div class="section-title">
+            <div class="label">Recommended</div>
+            <h2>精选文章</h2>
+        </div>
         <div class="featured-grid">
             <div class="featured-card">
                 <div class="badge">入门</div>
                 <h3>光纤传感是什么？</h3>
-                <p>一根光纤=成千上万个传感器？散射、干涉、布拉格光栅——三种主流光纤传感原理入门。</p>
+                <p>一根光纤 = 成千上万个传感器。瑞利散射、拉曼散射、布里渊散射——三种方式让一根光纤同时感知声音、温度和应变。</p>
             </div>
             <div class="featured-card">
                 <div class="badge">技术</div>
                 <h3>DAS vs DTS vs DSS</h3>
-                <p>分布式声波、温度、应变——三种测量技术在原理和应用上的区别与联系。</p>
+                <p>声波、温度、应变三种测量方式的原理区别与现场互补应用。不是替代关系，而是三套感官系统。</p>
             </div>
             <div class="featured-card">
                 <div class="badge">现场</div>
-                <h3>压裂过程中光纤在监测什么</h3>
-                <p>从桥塞坐封到裂缝扩展，一根套管外光纤在压裂全程扮演什么角色。</p>
+                <h3>压裂监测：光纤在井下"看"什么</h3>
+                <p>从桥塞坐封到裂缝扩展，一根套管外光纤在压裂全程中扮演的角色——实时、全井段、不停工。</p>
             </div>
             <div class="featured-card">
                 <div class="badge">前沿</div>
-                <h3>LF-DAS：让邻井告诉你裂缝怎么长</h3>
-                <p>低频DAS应变监测如何像"听诊器"一样感知邻井的裂缝扩展。</p>
+                <h3>LF-DAS：听见裂缝生长的声音</h3>
+                <p>低频DAS应变监测让邻井感知裂缝扩展的方向和速度，像是给地层做超声波。</p>
             </div>
         </div>
     </section>
 
-    <div class="filter-bar" id="filterBar">
-        <button class="active" data-cat="all">全部</button>
-        <button data-cat="principle">原理入门</button>
-        <button data-cat="tech">技术详解</button>
-        <button data-cat="field">现场应用</button>
-        <button data-cat="frontier">前沿动态</button>
-        <button data-cat="tool">工具推荐</button>
-    </div>
-
-    <div class="posts" id="postGrid"></div>
+    <section class="section" id="articles">
+        <div class="section-title">
+            <div class="label">Articles</div>
+            <h2>全部文章</h2>
+        </div>
+        <div class="filter-bar" id="filterBar">
+            <button class="active" data-cat="all">全部</button>
+            <button data-cat="principle">原理入门</button>
+            <button data-cat="tech">技术详解</button>
+            <button data-cat="field">现场应用</button>
+            <button data-cat="frontier">前沿动态</button>
+            <button data-cat="tool">工具推荐</button>
+        </div>
+        <div class="post-grid" id="postGrid"></div>
+    </section>
 
     <footer class="footer">
-        <p>© 2026 <a href="#">光纤物语</a> · 科普内容 · 欢迎交流指正</p>
+        <p>© 2026 <a href="https://github.com/Aze2022/fiber-optic-sensing-blog" target="_blank">FIBER SENSE</a> · 科普内容 · 欢迎交流指正</p>
     </footer>
 
     <script>
-        const posts = [
-            {
-                cat:"principle", title:"光纤怎么感知"声音"？——DAS原理",
-                excerpt:"分布式声波传感（DAS）利用光纤中瑞利散射的相位变化来检测外界振动。通俗讲：光在光纤里跑，遇到振动就\"抖一下\"，我们捕捉这个\"抖\"就知道哪里发生了什么。",
-                tags:["DAS","原理","瑞利散射"], date:"2026-05"
-            },
-            {
-                cat:"principle", title:"光纤怎么感知温度？——DTS原理",
-                excerpt:"分布式温度传感（DTS）基于拉曼散射——光与分子碰撞后频率发生偏移，这个偏移量与温度一一对应。拉曼反斯托克斯信号就是一把\"光学温度计\"。",
-                tags:["DTS","原理","拉曼散射"], date:"2026-05"
-            },
-            {
-                cat:"principle", title:"DSS：当光纤变成应变片",
-                excerpt:"布里渊散射对温度和应变都敏感，通过检测布里渊频移可以得到光纤沿线的应变分布。适用于管道变形、边坡位移等长期结构监测。",
-                tags:["DSS","原理","布里渊"], date:"2026-04"
-            },
-            {
-                cat:"principle", title:"空间分辨率 vs 采样分辨率",
-                excerpt:"这两个概念经常被混淆。空间分辨率决定了能区分多近的两个事件；采样分辨率是数据采集的间隔。理解它们的区别是读懂光纤监测数据的第一步。",
-                tags:["原理","概念澄清"], date:"2026-04"
-            },
-            {
-                cat:"tech", title:"DAS vs DTS vs DSS：怎么选？",
-                excerpt:"三种技术不是替代关系而是互补：DAS看动态事件（裂缝、振动）、DTS看温度场（产液剖面）、DSS看静态应变（形变）。现场常常联合部署。",
-                tags:["DAS","DTS","DSS","对比"], date:"2026-05"
-            },
-            {
-                cat:"tech", title:"LF-DAS：低频信号能告诉我们什么",
-                excerpt:"常规DAS关注高频声波信号，而低频段（0.01-1Hz）的DAS应变信号可以揭示裂缝扩展的缓慢过程——像是给地层做\"慢动作回放\"。",
-                tags:["LF-DAS","裂缝监测"], date:"2026-05"
-            },
-            {
-                cat:"tech", title:"光纤是怎么下到井里的？",
-                excerpt:"套管外永置式、连续油管传输、电缆投捞——三种光纤下井方式的原理、优缺点和适用场景对比。",
-                tags:["光纤安装","施工"], date:"2026-04"
-            },
-            {
-                cat:"tech", title:"温度剖面为什么能判断产液层位？",
-                excerpt:"产层流体进入井筒会带来温度异常——油嘴效应导致降温、地温梯度恢复形成特征曲线。通过分析沿井深的温度剖面可以反推出哪些层位在产出。",
-                tags:["DTS","产液剖面","解释"], date:"2026-04"
-            },
-            {
-                cat:"field", title:"压裂监测：光纤在井下"看"什么",
-                excerpt:"从桥塞坐封验证、各簇进液均匀性、裂缝起裂与扩展，到管外窜识别——一根套管外光纤在一口井压裂全程的监测任务清单。",
-                tags:["压裂监测","现场"], date:"2026-05"
-            },
-            {
-                cat:"field", title:"生产剖面监测的挑战与对策",
-                excerpt:"产液/产气剖面光纤监测面临低流量、多相流、井筒积液等挑战。多种解释方法联合（DTS温差法+DAS声波法）提高精度。",
-                tags:["产液剖面","现场","解释"], date:"2026-04"
-            },
-            {
-                cat:"field", title:"桥塞漏液：最常见的压裂异常之一",
-                excerpt:"桥塞密封失效会导致压裂液串层，影响裂缝改造效果。DAS/DTS可以实时检测桥塞漏液的位置和严重程度。",
-                tags:["桥塞","压裂","异常诊断"], date:"2026-04"
-            },
-            {
-                cat:"field", title:"邻井光纤监测：借一双眼睛看裂缝",
-                excerpt:"在一口井的光纤上\"听\"邻井的压裂施工——裂缝扩展到邻井附近时会引起地层应变变化，LF-DAS是最佳"监听"工具。",
-                tags:["邻井监测","LF-DAS"], date:"2026-03"
-            },
-            {
-                cat:"frontier", title:"uDAS：更高灵敏度的下一代DAS",
-                excerpt:"uDAS通过增强型光缆设计+优化解调算法，将DAS的灵敏度提升1-2个量级，让微小信号（如微地震事件）可以被更清晰地捕捉。",
-                tags:["uDAS","前沿"], date:"2026-05"
-            },
-            {
-                cat:"frontier", title:"光纤传感 + AI：智能解释的探索",
-                excerpt:"利用深度学习自动识别DAS/DTS数据中的裂缝事件、产液异常，大幅降低人工解释工作量。目前处于学术研究向现场转化的阶段。",
-                tags:["AI","数据解释","前沿"], date:"2026-04"
-            },
-            {
-                cat:"frontier", title:"CO₂封存中的光纤监测应用",
-                excerpt:"CCUS（碳捕集利用与封存）需要长期可靠的泄漏监测手段。分布式光纤温度/应变传感可以实时监测CO₂在地下的运移和封存状态。",
-                tags:["CCUS","前沿","长期监测"], date:"2026-04"
-            },
-            {
-                cat:"frontier", title:"煤层气 vs 页岩气：光纤监测的差异",
-                excerpt:"两类非常规储层的物性差异导致光纤监测策略不同：煤层气关注吸附解吸过程，页岩气更关注复杂缝网扩展。",
-                tags:["非常规","煤层气","页岩气"], date:"2026-03"
-            },
-            {
-                cat:"tool", title:"理解DAS数据的3个关键参数",
-                excerpt:"采样率、标距长度、脉冲宽度——这三个参数决定了DAS系统的性能边界，理解它们才能正确解读数据。",
-                tags:["DAS","参数","工具"], date:"2026-04"
-            },
-            {
-                cat:"tool", title:"用Python处理DTS温度数据入门",
-                excerpt:"从原始DTS数据到温度剖面图。本文介绍基础的数据读取、温度校正、可视化方法，适合动手尝试的读者。",
-                tags:["Python","DTS","数据处理"], date:"2026-03"
+        // ── 粒子动画 ──
+        const canvas = document.getElementById('bg-canvas');
+        const ctx = canvas.getContext('2d');
+        let W, H;
+
+        function resize() {
+            W = canvas.width = window.innerWidth;
+            H = canvas.height = window.innerHeight;
+        }
+        resize();
+        window.addEventListener('resize', resize);
+
+        const PARTICLE_COUNT = 100;
+        const CONNECTION_DIST = 150;
+
+        const particles = Array.from({ length: PARTICLE_COUNT }, () => ({
+            x: Math.random() * W,
+            y: Math.random() * H,
+            vx: (Math.random() - .5) * .5,
+            vy: (Math.random() - .5) * .5,
+            r: Math.random() * 1.5 + .5
+        }));
+
+        function draw() {
+            ctx.clearRect(0, 0, W, H);
+
+            // Draw connections
+            for (let i = 0; i < particles.length; i++) {
+                for (let j = i + 1; j < particles.length; j++) {
+                    const dx = particles[i].x - particles[j].x;
+                    const dy = particles[i].y - particles[j].y;
+                    const dist = Math.sqrt(dx * dx + dy * dy);
+                    if (dist < CONNECTION_DIST) {
+                        const alpha = (1 - dist / CONNECTION_DIST) * .15;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[i].x, particles[i].y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.strokeStyle = `rgba(100,180,246,${alpha})`;
+                        ctx.lineWidth = .6;
+                        ctx.stroke();
+                    }
+                }
             }
+
+            // Draw particles
+            particles.forEach(p => {
+                ctx.beginPath();
+                ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+                ctx.fillStyle = `rgba(100,180,246,${.3 + Math.sin(Date.now() * .001 + p.x) * .15})`;
+                ctx.fill();
+
+                // Update
+                p.x += p.vx;
+                p.y += p.vy;
+                if (p.x < 0 || p.x > W) p.vx *= -1;
+                if (p.y < 0 || p.y > H) p.vy *= -1;
+            });
+
+            requestAnimationFrame(draw);
+        }
+        draw();
+
+        // ── 文章数据 ──
+        const posts = [
+            { cat:"principle", title:"光纤怎么感知"声音"？DAS原理", excerpt:"分布式声波传感（DAS）利用光纤中瑞利散射的相位变化检测外界振动。光在光纤里跑，遇到振动就\"抖一下\"，捕捉这个\"抖\"就知道哪里发生了什么。", tags:["DAS","瑞利散射","原理"], date:"2026-05" },
+            { cat:"principle", title:"光纤怎么感知温度？DTS原理", excerpt:"分布式温度传感（DTS）基于拉曼散射——光与分子碰撞后频率偏移，偏移量与温度一一对应。拉曼反斯托克斯信号就是一把\"光学温度计\"。", tags:["DTS","拉曼散射","原理"], date:"2026-05" },
+            { cat:"principle", title:"DSS：当光纤变成应变片", excerpt:"布里渊散射对温度和应变都敏感，通过检测布里渊频移得到光纤沿线的应变分布。适用于管道变形、边坡位移等长期结构监测。", tags:["DSS","布里渊","原理"], date:"2026-04" },
+            { cat:"principle", title:"空间分辨率 vs 采样分辨率", excerpt:"这两个概念经常被混淆。空间分辨率决定能区分多近的两个事件；采样分辨率只是数据采集间隔。理解区别是读懂光纤监测数据的第一步。", tags:["概念澄清","参数"], date:"2026-04" },
+            { cat:"tech", title:"DAS vs DTS vs DSS：怎么选？", excerpt:"三种技术不是替代关系而是互补：DAS看动态事件、DTS看温度场、DSS看静态应变。现场常常联合部署，各司其职。", tags:["对比","选型"], date:"2026-05" },
+            { cat:"tech", title:"LF-DAS：低频信号的价值", excerpt:"常规DAS关注高频声波，低频段（0.01-1Hz）的DAS应变信号可以揭示裂缝扩展的缓慢过程——像是给地层做\"慢动作回放\"。", tags:["LF-DAS","裂缝监测"], date:"2026-05" },
+            { cat:"tech", title:"光纤是怎么下到井里的？", excerpt:"套管外永置式、连续油管传输、电缆投捞——三种光纤下井方式的原理、优缺点和适用场景。", tags:["安装","施工"], date:"2026-04" },
+            { cat:"tech", title:"温度剖面如何判断产液层位？", excerpt:"产层流体进入井筒带来温度异常——油嘴效应导致降温、地温梯度恢复形成特征曲线。沿井深的温度剖面可以反推出哪些层位在产出。", tags:["DTS","解释","产液剖面"], date:"2026-04" },
+            { cat:"field", title:"压裂监测：光纤在井下看什么", excerpt:"从桥塞坐封验证、各簇进液均匀性、裂缝起裂与扩展到管外窜识别——一根套管外光纤在一口井压裂全程的监测任务清单。", tags:["压裂","现场","全流程"], date:"2026-05" },
+            { cat:"field", title:"生产剖面监测的挑战", excerpt:"产液/产气剖面光纤监测面临低流量、多相流、井筒积液等挑战。多种解释方法联合（DTS温差法+DAS声波法）提高精度。", tags:["产液剖面","解释"], date:"2026-04" },
+            { cat:"field", title:"桥塞漏液：最常见的压裂异常", excerpt:"桥塞密封失效导致压裂液串层，影响裂缝改造效果。DAS/DTS可以实时检测桥塞漏液的位置和严重程度。", tags:["桥塞","异常诊断"], date:"2026-04" },
+            { cat:"field", title:"邻井光纤监测：借一双眼睛", excerpt:"在一口井的光纤上\"听\"邻井的压裂施工——裂缝扩展到邻井附近时引起地层应变变化，LF-DAS是最佳\"监听\"工具。", tags:["邻井","LF-DAS"], date:"2026-03" },
+            { cat:"frontier", title:"uDAS：更高灵敏度", excerpt:"uDAS通过增强型光缆+优化解调算法，将DAS灵敏度提升1-2个量级，让微小信号（如微地震）被更清晰地捕捉。", tags:["uDAS","前沿"], date:"2026-05" },
+            { cat:"frontier", title:"光纤传感 + AI 智能解释", excerpt:"利用深度学习自动识别DAS/DTS数据中的裂缝事件、产液异常，大幅降低人工解释工作量。学术研究正向现场转化。", tags:["AI","智能解释"], date:"2026-04" },
+            { cat:"frontier", title:"CO₂封存中的光纤监测", excerpt:"CCUS需要长期可靠的泄漏监测手段。分布式光纤温度/应变传感可以实时监测CO₂在地下的运移和封存状态。", tags:["CCUS","长期监测"], date:"2026-04" },
+            { cat:"frontier", title:"煤层气 vs 页岩气：监测差异", excerpt:"两类非常规储层的物性差异导致光纤监测策略不同：煤层气关注吸附解吸，页岩气更关注复杂缝网扩展。", tags:["非常规","对比"], date:"2026-03" },
+            { cat:"tool", title:"理解DAS数据的3个关键参数", excerpt:"采样率、标距长度、脉冲宽度——这三个参数决定了DAS系统的性能边界，理解它们才能正确解读数据。", tags:["DAS","参数"], date:"2026-04" },
+            { cat:"tool", title:"Python处理DTS温度数据入门", excerpt:"从原始DTS数据到温度剖面图。基础的数据读取、温度校正、可视化方法，适合动手尝试。", tags:["Python","数据处理"], date:"2026-03" }
         ];
 
-        function render(category) {
+        function render(cat) {
             const grid = document.getElementById('postGrid');
-            const filtered = category === 'all' ? posts : posts.filter(p => p.cat === category);
-            if (filtered.length === 0) {
-                grid.innerHTML = '<p style="grid-column:1/-1;text-align:center;color:var(--text2);padding:2rem;">该分类暂无文章</p>';
-                return;
-            }
-            grid.innerHTML = filtered.map(p => `
-                <article class="post-card">
-                    <div class="category">${catLabel(p.cat)}</div>
-                    <h3>${p.title}</h3>
-                    <div class="excerpt">${p.excerpt}</div>
-                    <div class="meta">
-                        <span>${p.date}</span>
-                        <div class="tags">${p.tags.map(t => `<span>#${t}</span>`).join('')}</div>
-                    </div>
-                </article>
-            `).join('');
-        }
-        function catLabel(c) {
-            return { principle:"原理入门", tech:"技术详解", field:"现场应用", frontier:"前沿动态", tool:"工具推荐" }[c] || c;
+            const f = cat === 'all' ? posts : posts.filter(p => p.cat === cat);
+            grid.innerHTML = f.length
+                ? f.map(p => `
+                    <article class="post-card">
+                        <div class="cat">${({principle:'原理入门',tech:'技术详解',field:'现场应用',frontier:'前沿动态',tool:'工具推荐'})[p.cat]}</div>
+                        <h3>${p.title}</h3>
+                        <div class="excerpt">${p.excerpt}</div>
+                        <div class="meta">
+                            <span>${p.date}</span>
+                            <div class="tags">${p.tags.map(t => `<span>#${t}</span>`).join('')}</div>
+                        </div>
+                    </article>
+                `).join('')
+                : '<p style="grid-column:1/-1;text-align:center;color:rgba(224,224,240,.3);padding:3rem;">暂无文章</p>';
         }
 
         document.querySelectorAll('.filter-bar button').forEach(btn => {
@@ -405,17 +577,6 @@
                 render(btn.dataset.cat);
             });
         });
-
-        function toggleTheme() {
-            const html = document.documentElement;
-            const next = html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
-            html.setAttribute('data-theme', next);
-            localStorage.setItem('theme', next);
-        }
-        if (localStorage.getItem('theme') === 'dark' ||
-            (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.setAttribute('data-theme', 'dark');
-        }
         render('all');
     </script>
 </body>
